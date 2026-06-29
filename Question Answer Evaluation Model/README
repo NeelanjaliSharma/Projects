@@ -2,7 +2,7 @@
 
 An automated student answer evaluation system that combines speech recognition, video capture, and NLP-based semantic similarity to objectively score spoken answers against a model answer — built to reduce manual grading effort and improve consistency in assessment.
 
-🔗 **Project Link:** *http://127.0.0.1:5000/*
+🔗 **Project Link:** http://127.0.0.1:5000/
 
 ## Overview
 
