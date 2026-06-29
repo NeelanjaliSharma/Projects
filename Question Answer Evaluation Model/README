@@ -1,1 +1,170 @@
+# Question Answer Evaluation System
 
+An automated student answer evaluation system that combines speech recognition, video capture, and NLP-based semantic similarity to objectively score spoken answers against a model answer — built to reduce manual grading effort and improve consistency in assessment.
+
+🔗 **Project Link:** *[Add your live demo / deployed app link here]*
+
+## Overview
+
+Evaluating spoken or written student answers — especially in oral exams, viva-style assessments, or large classes — is traditionally done by a human grader, which is slow, doesn't scale well, and can be inconsistent across evaluators or even across a single evaluator's session.
+
+This project automates that evaluation: it captures a student's spoken answer through audio and video in real time, transcribes the speech to text, and uses NLP-based similarity scoring to objectively measure how closely the answer matches a reference "model answer" — giving instant, consistent feedback instead of relying purely on manual grading.
+
+## Features
+
+- Real-time audio and video capture through a web interface
+- Speech-to-text transcription of spoken answers
+- NLP preprocessing pipeline: tokenization, stopword removal, and TF-IDF representation
+- Cosine similarity-based scoring to measure semantic relevance and correctness of answers
+- Deployed as a Flask web application for real-time evaluation
+- ~20% reduction in manual evaluation response time and ~15–20% improvement in evaluation accuracy *(see [Notes on reported metrics](#notes-on-reported-metrics))*
+
+## Tech Stack
+
+| Category | Tools |
+|---|---|
+| Language | Python |
+| Speech-to-Text | SpeechRecognition |
+| Video Capture | OpenCV |
+| NLP / Similarity | NLTK, Scikit-learn, TF-IDF, Cosine Similarity |
+| Web Framework | Flask |
+
+## Pipeline
+
+```
+Student speaks answer
+        │
+        ▼
+Audio + Video Capture  (real-time, via web interface)
+        │
+        ▼
+Speech-to-Text Transcription  (SpeechRecognition)
+        │
+        ▼
+Text Preprocessing  (lowercasing → tokenization → stopword removal)
+        │
+        ▼
+TF-IDF Vectorization  (student answer + model answer → numeric vectors)
+        │
+        ▼
+Cosine Similarity Scoring  (0 to 1 similarity score)
+        │
+        ▼
+Evaluation Result  (displayed via Flask web app)
+```
+
+## Project Structure
+
+```
+question-answer-evaluation/
+├── static/
+│   └── ...                          # CSS/JS assets for the web interface
+├── templates/
+│   └── index.html                   # <-- replace with your actual template filename
+├── src/
+│   ├── speech_to_text.py
+│   ├── preprocessing.py
+│   ├── similarity.py
+│   └── video_capture.py
+├── app.py                           # Flask entry point
+├── requirements.txt
+└── README.md
+```
+> **Note:** the structure above is a standard template — update it to match your actual repository layout, file names, and folders before publishing.
+
+## Installation
+
+```bash
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd <your-repo-name>
+pip install -r requirements.txt
+```
+
+### Requirements
+
+```
+Flask
+SpeechRecognition
+opencv-python
+nltk
+scikit-learn
+```
+> Update this list to match your actual `requirements.txt`.
+
+Download required NLTK data (one-time setup):
+
+```python
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+```
+
+## Usage
+
+### Running the app
+
+```bash
+python app.py
+```
+
+Then open `http://localhost:5000` in your browser to access the evaluation interface.
+
+### Evaluating an answer (programmatic example)
+
+```python
+from src.similarity import evaluate_answer
+
+score = evaluate_answer(student_audio_path="answer.wav", model_answer="The heart pumps blood through the body.")
+print(score)  # e.g., 0.82
+```
+> Adjust function/file names above to match your actual code interface.
+
+## Methodology
+
+**Speech recognition** — Recorded audio is transcribed to text using the SpeechRecognition library, bridging the spoken answer into something NLP techniques can process.
+
+**Video capture** — OpenCV handles real-time video capture and display during the answer, supporting the live, exam-like experience and optional presence verification. Video is not used in the similarity scoring itself — scoring is purely text-based.
+
+**Preprocessing** — Both the transcribed student answer and the stored model answer are lowercased, tokenized, and stripped of stopwords to focus the comparison on meaningful, content-bearing words rather than common filler words.
+
+**Vectorization** — TF-IDF converts both cleaned texts into numeric vectors, weighting words by how often they appear in a given answer relative to how distinctive they are across answers in general.
+
+**Scoring** — Cosine similarity is computed between the two TF-IDF vectors, producing a score from 0 to 1 representing how closely the student's answer aligns with the model answer's pattern of important words. This score (or a thresholded label such as Correct / Partially Correct / Incorrect) is returned to the user through the Flask interface.
+
+## Results
+
+| Metric | Value |
+|---|---|
+| Reduction in manual evaluation time | *fill in from your testing* |
+| Improvement in evaluation accuracy | *fill in from your testing* |
+
+> Replace the placeholders above with real measured figures where possible — see the note below on the estimates currently referenced.
+
+## Limitations
+
+- Cosine similarity over TF-IDF measures lexical/keyword overlap, not deep semantic understanding — a correct answer phrased very differently from the model answer can score lower than it deserves
+- Transcription errors from speech recognition propagate directly into the evaluation score
+- A single stored "model answer" may not capture all valid ways of correctly answering a question
+
+## Future Improvements
+
+- Move toward embedding-based semantic similarity (e.g., sentence embeddings) to better handle paraphrased correct answers
+- Support multiple acceptable model answers per question
+- Add audio preprocessing/noise reduction to improve speech recognition robustness across accents and recording conditions
+- Run a rigorous before/after study with logged data to validate time-saving and accuracy claims
+
+## Notes on Reported Metrics
+
+The ~20% time-reduction and ~15–20% accuracy-improvement figures referenced in this README are estimates based on the expected difference between manual and automated evaluation, not results from a formal, controlled measurement study with logged before/after data. If republishing or citing this project, it's worth running an actual timed comparison (manual evaluators vs. the automated system on the same batch of answers) to confirm and report exact, reproducible numbers.
+
+## Disclaimer
+
+This project is intended as a first-pass automated assessment aid, not a full replacement for human evaluators. Its similarity score reflects keyword/semantic overlap, not deep conceptual understanding, so nuanced or partially correct answers still benefit from human review.
+
+## License
+
+*Add your chosen license here (e.g., MIT).*
+
+## Author
+
+*Your name / contact / LinkedIn / portfolio link.*
