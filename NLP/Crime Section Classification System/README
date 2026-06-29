@@ -1,1 +1,164 @@
+# Crime Section Classification System
 
+An NLP-based multi-class text classification system that maps free-text crime descriptions to their corresponding **IPC (Indian Penal Code)** legal sections — built to support faster, more consistent classification for legal-tech and law enforcement use cases.
+
+## Overview
+
+Crime descriptions are typically recorded as free, unstructured text. Mapping a description to the correct IPC section is normally done manually, based on the reporting officer's or legal staff's familiarity with the law — a process that can be slow and inconsistent across different reviewers.
+
+This project automates that first-pass classification: given a crime description, the model predicts the most likely IPC section(s) it falls under, acting as a decision-support tool rather than a final legal authority.
+
+## Features
+
+- End-to-end NLP pipeline: tokenization, stopword removal, stemming, and TF-IDF vectorization
+- Multi-class classification across multiple IPC sections
+- Benchmarking of three classifiers — Naive Bayes, SVM, and Logistic Regression — with the best-performing model selected via F1-score and confusion matrix analysis
+- Iterative feature engineering and hyperparameter tuning to improve classification performance
+- ~75–80% prediction accuracy on the held-out test set *(see [Notes on reported metrics](#notes-on-reported-metrics))*
+
+## Tech Stack
+
+| Category | Tools |
+|---|---|
+| Language | Python |
+| NLP | NLTK |
+| ML / Vectorization | Scikit-learn, TF-IDF |
+| Models | Naive Bayes, SVM, Logistic Regression |
+
+## Pipeline
+
+```
+Raw crime description
+        │
+        ▼
+Text Preprocessing  (lowercasing → tokenization → stopword removal → stemming)
+        │
+        ▼
+TF-IDF Vectorization  (free text → numeric feature vectors)
+        │
+        ▼
+Classifier  (Naive Bayes / SVM / Logistic Regression)
+        │
+        ▼
+Predicted IPC Section
+```
+
+## Project Structure
+
+```
+crime-section-classification/
+├── data/
+│   └── crime_descriptions.csv        # <-- replace with your actual dataset filename/path
+├── notebooks/
+│   └── crime_classification.ipynb    # <-- replace with your actual notebook filename
+├── src/
+│   ├── preprocessing.py
+│   ├── vectorizer.py
+│   ├── train.py
+│   └── predict.py
+├── models/
+│   └── best_model.pkl
+├── requirements.txt
+└── README.md
+```
+> **Note:** the structure above is a standard template — update it to match your actual repository layout, file names, and folders before publishing.
+
+## Installation
+
+```bash
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd <your-repo-name>
+pip install -r requirements.txt
+```
+
+### Requirements
+
+```
+scikit-learn
+nltk
+pandas
+numpy
+```
+> Update this list to match your actual `requirements.txt`.
+
+Download required NLTK data (one-time setup):
+
+```python
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+```
+
+## Usage
+
+### Training
+
+```bash
+python src/train.py --data data/crime_descriptions.csv
+```
+
+### Predicting on new text
+
+```python
+from src.predict import predict_section
+
+description = "The accused forcibly entered the premises and stole valuables."
+predicted_section = predict_section(description)
+print(predicted_section)
+```
+> Adjust function/file names above to match your actual code interface.
+
+## Methodology
+
+**Preprocessing** — Each crime description is lowercased, tokenized, stripped of stopwords, and stemmed to consolidate grammatical variants of the same term (e.g., *"stole"*, *"stealing"*, *"stolen"*) into a shared root, strengthening the relevant signal for classification.
+
+**Feature extraction** — TF-IDF (Term Frequency–Inverse Document Frequency) converts each preprocessed description into a numeric vector, weighting words by how frequent they are within a given description versus how rare/distinctive they are across the dataset as a whole. This helps the model focus on legally distinctive terms rather than generic, frequently occurring words.
+
+**Modeling** — Three classifiers were trained and benchmarked under the same preprocessing and feature extraction pipeline: Multinomial Naive Bayes, Linear SVM, and Logistic Regression. Models were compared using F1-score (not just raw accuracy, due to class imbalance across IPC sections) and confusion matrix analysis to identify which sections were most often confused with one another.
+
+**Tuning** — Performance was improved through iterative feature engineering (e.g., adjusting TF-IDF vocabulary size and n-gram range) and hyperparameter tuning (e.g., the regularization parameter for SVM/Logistic Regression, smoothing parameter for Naive Bayes), typically via grid search with cross-validation.
+
+## Results
+
+| Model | Metric | Score |
+|---|---|---|
+| Naive Bayes | F1 (macro) | *fill in from your notebook* |
+| SVM | F1 (macro) | *fill in from your notebook* |
+| Logistic Regression | F1 (macro) | *fill in from your notebook* |
+
+> Replace the placeholders above with your actual benchmarked scores before publishing — this table is one of the first things a recruiter or reviewer is likely to check.
+
+## Limitations
+
+- Classifies based on textual patterns rather than legal reasoning — cannot account for intent, context, or nuance the way a legal professional can
+- Performance likely varies across classes; IPC sections with fewer training examples are predicted less reliably than well-represented ones
+- A single crime can genuinely fall under multiple IPC sections, but this system performs single-label classification (one predicted section per description) rather than multi-label
+
+## Future Improvements
+
+- Extend to multi-label classification to reflect that a single crime can fall under multiple IPC sections
+- Address class imbalance more rigorously (class weighting, targeted data collection for underrepresented sections)
+- Explore embedding-based or transformer-based text representations as an alternative/complement to TF-IDF
+- Validate performance with a properly logged baseline-vs-tuned comparison rather than ad hoc estimates
+
+## Notes on Reported Metrics
+
+The accuracy and improvement figures referenced in this README reflect approximate results observed during development. If you are republishing or citing this project, it's worth re-running evaluation on your final model and dataset split to confirm and report exact, reproducible numbers.
+
+## Disclaimer
+
+This project is intended as a decision-support and educational tool, not a substitute for professional legal judgment. Predicted IPC sections should be reviewed and confirmed by a qualified person before any real-world legal or law-enforcement use.
+
+## License
+
+Copyright (c) 2026 Neelanjali Sharma
+
+All Rights Reserved.
+
+No part of this repository may be copied, modified, distributed, or used in any form without prior written permission from the copyright holder.
+
+This repository is made available for viewing purposes only.
+
+## Neelanjali Sharma
+
+*Your name / contact / LinkedIn / portfolio link.*
